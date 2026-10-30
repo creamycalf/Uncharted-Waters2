@@ -1,0 +1,114 @@
+(function(){
+ 'use strict';
+ const C=window.K2MobileCore;let surface,stick,knob,toolbar,cursorMark,deck=null,panel=null,touch=null,heading=null,joy=null,clickBusy=false,epoch=0,frameAt=0,frameTimer=null,pendingFrame=null,lastCi=null;
+ let inputMode=localStorage.getItem('uw2-input-mode')==='trackpad'?'trackpad':'direct',moveMode=['joystick','tap'].includes(localStorage.getItem('uw2-move-mode'))?localStorage.getItem('uw2-move-mode'):'swipe',speed=Math.max(100,Math.min(300,Number(localStorage.getItem('uw2-speed-percent'))||150)),fill=localStorage.getItem('uw2-screen-fit')!=='aspect',cursor={x:.5,y:.5},lastScene='',steering=null,steeringOwner=null,speedButton;
+ let raw=null,baseline=null,slot=1,owner=null,wasPaused=false,working=false,verified=false,trainerForm=null;
+ let walk=null,walkToken=0,walkKey=null,walkOwner=null,toastTimer=null,routeLayer=null;
+ function tell(message){let e=document.getElementById('mobile-hint');if(!e){e=document.createElement('div');e.id='mobile-hint';e.setAttribute('role','status');document.body.append(e);}e.textContent=message;e.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.hidden=true,3500);}
+ function stopWalk(){walkToken++;if(walkKey!==null&&walkOwner===window.__ci)walkOwner.sendKeyEvent(walkKey,false);walkKey=null;walkOwner=null;walk=null;if(routeLayer)routeLayer.setAttribute('hidden','');}
+ function walkFrame(){return canvas().getContext('2d').getImageData(0,0,640,480);}
+ function paintRoute(){if(!walk||!routeLayer)return;const r=canvas().getBoundingClientRect(),g=walk.grid,points=[walk.current,...walk.route].map(p=>[g.origin.x+p.x*16+walk.shift.x,g.origin.y+p.y*16+walk.shift.y]);routeLayer.removeAttribute('hidden');Object.assign(routeLayer.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});routeLayer.querySelector('polyline').setAttribute('points',points.map(p=>p.join(',')).join(' '));const last=points[points.length-1],dot=routeLayer.querySelector('circle');dot.setAttribute('cx',last[0]);dot.setAttribute('cy',last[1]);}
+ async function walkTo(x,y){
+  if(!canMove())return;if(window.K2UI.state().scene!=='port'){tell('点按寻路目前用于城市地面；航海请用摇杆或滑动');return;}
+  const N=window.K2MobileNavigation,ci=window.__ci,token=++walkToken;let frame=walkFrame(),hero=N.locate(frame);
+  for(let attempt=0;!hero&&attempt<3;attempt++){await new Promise(r=>setTimeout(r,120));if(token!==walkToken||ci!==window.__ci||!canMove())return;frame=walkFrame();hero=N.locate(frame);}
+  if(!hero){tell('当前无法可靠识别人物，请用摇杆移动');return;}
+  const grid=N.map(frame,hero),target={x:Math.round((x-grid.origin.x)/16),y:Math.round((y-grid.origin.y)/16)};
+  let current={...grid.start},route=N.path(grid,current,target);if(!route){tell('没有识别到可走路线，请点城市道路或使用摇杆');return;}
+  if(!route.length)return;walkOwner=ci;walk={grid,target,current,route,shift:{x:0,y:0}};paintRoute();tell('正在寻路，触摸画面可停止');let previous=frame,position=hero,blocked=0;const started=performance.now();
+  try{for(let steps=0;steps<100&&performance.now()-started<45000;steps++){
+   if(token!==walkToken||ci!==window.__ci||!canMove())return;route=N.path(grid,current,target);if(!route){tell('前方受阻，已停止寻路');return;}if(!route.length){tell('已到达');return;}
+   walk.current=current;walk.route=route;paintRoute();const next=route[0],dx=next.x-current.x,dy=next.y-current.y,name=dx>0?'east':dx<0?'west':dy>0?'south':'north',key=window.K2MobileMotion.codes[name];
+   walkKey=key;ci.sendKeyEvent(key,true);await new Promise(r=>setTimeout(r,Math.max(18,35/(speed/100))));if(token!==walkToken)return;ci.sendKeyEvent(key,false);walkKey=null;
+   await new Promise(r=>setTimeout(r,Math.max(140,350/(speed/100))));if(token!==walkToken||!canMove())return;
+   const after=walkFrame(),shift=N.scroll(previous,after),found=N.locate(after,{x:position.x+shift.x+dx*16,y:position.y+shift.y+dy*16});
+   if(!found||shift.score<.65){tell('画面变化，已停止寻路');return;}
+   const mx=found.x-position.x-shift.x,my=found.y-position.y-shift.y;
+   walk.shift.x+=shift.x;walk.shift.y+=shift.y;
+   if(Math.abs(mx)<5&&Math.abs(my)<5){grid.cells[next.y*grid.width+next.x]=0;if(++blocked>4){tell('前方受阻，请用摇杆');return;}}
+   else if(Math.abs(mx-dx*16)<=5&&Math.abs(my-dy*16)<=5){current=next;blocked=0;}
+   else{tell('人物位置发生变化，已停止寻路');return;}
+   previous=after;position=found;
+  }tell('路线较长，已停止；可再次点选目的地');}finally{if(token===walkToken)stopWalk();}
+ }
+ function settings(){try{return JSON.parse(localStorage.getItem('uw2-mobile-patches')||'{}');}catch{return {};}}
+ const activePatches=settings();
+ async function bootOverlay(){const r=await fetch('game/MAIN.original.EXE');if(!r.ok)throw Error('无法读取原版程序');const a=new Uint8Array(await r.arrayBuffer());const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',a)),x=>x.toString(16).padStart(2,'0')).join('');if(hash!=='76ab2f81a465b393313831ac81f7ff7b8d450b87b2fae06886b0a8740f3c0281')throw Error('游戏版本不符，补丁未加载');verified=true;return C.zip('MAIN.EXE',C.patchMain(a,activePatches));}
+ function ready(){return window.__ci&&!window.__k2Booting&&!window.K2Slots?.isOpen()&&!window.K2Exit?.isClosing()&&!window.K2Lifecycle?.state().panel&&!window.K2Skin?.state().transitionLoading&&!panel&&!deck;}
+ function canvas(){return document.querySelector('[code-path="src/App.tsx:271:11"]')||document.querySelector('#root canvas');}
+ function release(){epoch++;touch=null;joy=null;stopWalk();steering?.stop();window.K2UI?.cancelActions();if(heading)window.K2UI?.direction(heading,false,undefined,true);heading=null;if(knob)knob.style.transform='translate(-50%,-50%)';}
+ function eventStop(e){e.preventDefault();e.stopImmediatePropagation();}
+ async function clickAt(x,y,right){if(!ready()||clickBusy)return;const ci=window.__ci,token=epoch,r=canvas()?.getBoundingClientRect();if(!r)return;const p=C.position(x,y,r);cursor={x:p.x,y:p.y*440/480};paintCursor();const s=window.K2UI?.state(),nativeY=p.y*440;
+   // Native root tabs sometimes need to re-enter mouse mode after a direction key.
+   // Reuse the upstream bounded, popup-aware activation only for these four tabs.
+   if(!right&&s?.tabs&&(s.scene==='port'||s.scene==='sea')&&p.x>=612/640&&nativeY>=112&&nativeY<432){window.K2UI.shortcut(Math.floor((nativeY-112)/80));return;}
+   window.K2UI?.cancelActions();clickBusy=true;let pressed=false;
+   try{ci.sendMouseMotion(p.x,p.y);ci.sendMouseSync();await new Promise(r=>setTimeout(r,120));if(token!==epoch||ci!==window.__ci||!ready())return;ci.sendMouseMotion(p.x,p.y);ci.sendMouseSync();ci.sendMouseButton(right?1:0,true);pressed=true;ci.sendMouseSync();await new Promise(r=>setTimeout(r,90));}
+   finally{if(pressed&&ci===window.__ci){ci.sendMouseButton(right?1:0,false);ci.sendMouseSync();}clickBusy=false;}
+ }
+ function canMove(){const s=window.K2UI?.state();return ready()&&s?.tabs&&!s.popup&&(s.scene==='port'||s.scene==='sea');}
+ function positionCanvas(c,cropped){const safe=window.K2Layout?.geometry().safe||{},r=C.viewport(innerWidth,innerHeight,cropped,safe,fill);for(const k of ['left','top','width','height'])c.style.setProperty(k,r[k]+'px','important');c.style.setProperty('clip-path',cropped?'inset(8.333333333% 0 8.333333333% 0)':'none','important');c.dataset.approvedViewport=cropped?'verified-black-40-40':'full-native-frame';return true;}
+ function paintCursor(){if(!cursorMark)return;const r=canvas()?.getBoundingClientRect();cursorMark.hidden=!r||inputMode!=='trackpad'||!ready();if(r){cursorMark.style.left=r.left+cursor.x*r.width+'px';cursorMark.style.top=r.top+cursor.y*r.height+'px';}}
+ function mouseButton(right){const r=canvas()?.getBoundingClientRect();if(r)clickAt(r.left+cursor.x*r.width,r.top+cursor.y*r.height,right);}
+ function isPlayClock(m){return m.cpuMax>=3000&&m.cpuMax<=6000&&!m.fastForward&&m.emulatorSpeed>=1&&m.emulatorSpeed<=3;}
+ function resumeAudio(){if(window.__ci&&!window.__k2Booting&&!window.K2Slots?.isOpen())window.K2BootAudio?.ready(window.__ci);}
+ function applySpeed(){if(!window.__ci||window.__k2Booting||window.K2Slots?.isOpen())return;release();for(const event of ['auto_adjust:0','fast_forward:0','cycles:'+(speed===100?3000:3600),'speed:'+speed])window.__ci.sendBackendEvent({type:'wc-trigger-event',event});if(speedButton)speedButton.textContent='速度：'+speed/100+'×';}
+ function hideDeck(){if(deck){deck.remove();deck=null;}release();}
+ function showDeck(kind){if(!ready())return;release();deck=document.createElement('div');deck.id='mobile-deck';deck.setAttribute('role','dialog');deck.setAttribute('aria-label',kind==='speed'?'调整速度':kind===true?'数量输入':'游戏菜单');const box=document.createElement('div');box.className='mobile-deck-box';deck.append(box);deck.addEventListener('pointerdown',e=>{if(e.target===deck)hideDeck();});document.body.append(deck);
+  if(kind==='speed'){const label=document.createElement('p'),range=document.createElement('input');range.type='range';range.min=100;range.max=300;range.step=25;range.value=speed;range.setAttribute('aria-label','游戏速度');function select(value){speed=Number(value);range.value=speed;label.textContent='游戏速度 '+speed/100+'×';localStorage.setItem('uw2-speed-percent',speed);applySpeed();}range.oninput=()=>select(range.value);label.textContent='游戏速度 '+speed/100+'×';box.append(label,range);for(const value of [100,125,150,200,250,300])box.append(button(value/100+'×',()=>select(value)));const tip=document.createElement('p');tip.textContent='加快游戏时钟，音乐节奏也可能变化。建议先试 1.5×；卡顿时调低。';box.append(tip);}
+  else if(kind===true){const title=document.createElement('p');title.textContent='数量输入：买卖、补给、雇佣等输入数量时使用';box.append(title);const grid=document.createElement('div');grid.className='mobile-key-grid';for(const digit of '1234567890')grid.append(button(digit,()=>window.K2Input.key(digit.charCodeAt(0))));box.append(grid);for(const [label,act] of [['清空',()=>window.K2Input.numberAction('clear')],['最大',()=>window.K2Input.numberAction('max')],['确认',()=>{window.K2Input.key(257);hideDeck();}]])box.append(button(label,act));}
+  else{for(const [label,act] of [['保存',()=>window.K2App.save()],['读取',()=>window.K2App.load()],['数量输入',()=>showDeck(true)],['修改器',open],[fill?'画面：铺满（点击改等比）':'画面：等比（点击铺满）',()=>{fill=!fill;localStorage.setItem('uw2-screen-fit',fill?'fill':'aspect');const c=canvas();if(c)positionCanvas(c,c.dataset.approvedViewport==='verified-black-40-40');layout();}],[window.K2App?.muted?'开启音乐':'关闭音乐',()=>{localStorage.setItem('uw2-muted',window.K2App?.muted?'0':'1');window.K2App.toggleSound();resumeAudio();}],['保存并退出',()=>window.K2App.saveExit()]]){const b=button(label,()=>{hideDeck();act();});if(label==='数量输入'&&!window.K2Input?.state().numeric){b.disabled=true;b.title='在原游戏数量输入框出现时可用';}box.append(b);}const help=document.createElement('p');help.textContent='直触可轻点选项；滑鼠用滑动定位，再按左键。铺满会拉伸画面，可切回等比。数量输入仅在原游戏数量框出现时启用。';box.append(help);}
+  box.append(button('收起',hideDeck));
+ }
+ function changeHeading(next){if(steeringOwner!==window.__ci){steering?.stop();steeringOwner=window.__ci;const ci=steeringOwner;steering=window.K2MobileMotion.steering((code,down)=>{if(ci===window.__ci)ci.sendKeyEvent(code,down);},{rate:()=>speed/100,active:()=>ci===window.__ci&&canMove()});}heading=next;steering.set(next,window.K2UI.state().scene==='sea');}
+ function setHeading(dx,dy,id){changeHeading(C.direction(dx,dy,window.K2UI.state().scene==='sea',16));}
+ function steer(e){if(!joy||joy.id!==e.pointerId)return;if(!canMove()){release();return;}const dx=e.clientX-joy.x,dy=e.clientY-joy.y;changeHeading(C.direction(dx,dy,window.K2UI.state().scene==='sea'));const len=Math.hypot(dx,dy),scale=Math.min(1,34/(len||1));knob.style.transform='translate(calc(-50% + '+dx*scale+'px),calc(-50% + '+dy*scale+'px))';}
+ function button(label,fn){const b=document.createElement('button');b.textContent=label;b.type='button';b.onclick=fn;return b;}
+ function note(text){if(panel)panel.querySelector('.mobile-note').textContent=text;}
+ function row(label,input){const r=document.createElement('label');r.className='mobile-row';const s=document.createElement('span');s.textContent=label;r.append(s,input);return r;}
+ function readSlot(){try{baseline=C.inspect(raw,slot);trainerForm.load(raw,slot);panel.querySelector('.mobile-apply').disabled=false;note('修改的是所选存档。应用后须读取该记录生效。切换存档会清除尚未应用的修改。');}catch(e){baseline=null;trainerForm.clear();panel.querySelector('.mobile-apply').disabled=true;note(e.message);}}
+ function lockTrainer(value){working=value;panel?.querySelectorAll('button,input,select').forEach(b=>b.disabled=value);if(!value&&panel)panel.querySelector('.mobile-apply').disabled=!baseline||!verified;}
+ async function apply(){if(working||!baseline||!verified)return;lockTrainer(true);try{const {next,count}=trainerForm.build();if(!count){note('数值没有变化');return;}await window.K2Slots.mobileReplace(raw,next);raw=next;readSlot();note('已备份并修改记录 '+slot+'（'+count+' 项）。点击“读取记录”选择此记录生效。');}catch(e){note('未完成修改：'+e.message);}finally{lockTrainer(false);}}
+ async function close(){if(working)return;if(panel){panel.remove();panel=null;}release();if(owner&&owner===window.__ci&&!wasPaused&&!document.hidden&&!window.K2Lifecycle?.state().panel)owner.resume();owner=null;}
+ async function open(){if(panel||window.__k2Booting||window.K2Slots?.isOpen()||window.K2Exit?.isClosing())return;release();window.K2UI?.cancelActions();window.K2Input?.cancelActions();owner=window.__ci;wasPaused=!!window.K2Lifecycle?.state().panel;owner?.pause();panel=document.createElement('section');panel.id='mobile-trainer';panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.innerHTML='<div class="mobile-sheet"><h2>航海修改器</h2><p class="mobile-note" role="status">正在读取记录…</p><div class="mobile-record"></div><div class="mobile-categories" aria-label="修改类别"></div><div class="mobile-entity"></div><div class="mobile-fields"></div><div class="mobile-actions"></div><h3>航行补丁</h3><p>开关在下次启动游戏时生效。请先保存，再退出重开。</p><div class="mobile-patches"></div><small>补丁默认关闭。每次应用保留一份完整存档备份，下一次应用会更新此备份。</small></div>';document.body.append(panel);
+ const sel=document.createElement('select');sel.setAttribute('aria-label','选择存档');for(let n=1;n<=10;n++){const op=document.createElement('option');op.value=n;op.textContent='记录 '+n;sel.append(op);}slot=window.K2Slots.currentRecord()||1;sel.value=slot;sel.onchange=()=>{slot=Number(sel.value);if(raw)readSlot();};panel.querySelector('.mobile-record').append(row('选择存档',sel));
+ trainerForm=window.K2MobileTrainerForm(panel,note);
+ const applyButton=button('备份并应用',apply);applyButton.className='mobile-apply';applyButton.disabled=true;
+ panel.querySelector('.mobile-actions').append(applyButton,button('读取记录',async()=>{await close();window.K2Slots.open('load');}),button('恢复修改前备份',async()=>{if(working)return;lockTrainer(true);try{await window.K2Slots.mobileRestore();raw=await window.K2Slots.mobileRead();readSlot();note('已恢复修改前备份；读取记录后生效。');}catch(e){note(e.message);}finally{lockTrainer(false);}}),button('返回游戏',close));
+ const pending=settings();for(const [k,label] of [['food','航行不耗粮食'],['water','航行不耗水']]){const input=document.createElement('input');input.type='checkbox';input.checked=!!pending[k];input.onchange=()=>{pending[k]=input.checked;localStorage.setItem('uw2-mobile-patches',JSON.stringify(pending));note('补丁设置已保存，下次启动生效；当前：粮食'+(activePatches.food?'不消耗':'正常')+'，水'+(activePatches.water?'不消耗':'正常'));};panel.querySelector('.mobile-patches').append(row(label,input));}
+ try{raw=await window.K2Slots.mobileRead();if(!verified)await bootOverlay();readSlot();}catch(e){note(e.message);}
+ }
+ function layout(){const c=canvas(),ci=window.__ci;if(ci!==lastCi){release();hideDeck();lastCi=ci;}const scene=JSON.stringify(window.K2UI?.state());if(scene!==lastScene){release();lastScene=scene;}const r=c?.getBoundingClientRect();surface.hidden=!r||!ready();toolbar.hidden=!ready();stick.hidden=!canMove()||moveMode!=='joystick';if(!canMove()&&(joy||heading))release();if(r){const crop=c.dataset.approvedViewport==='verified-black-40-40'?r.height/12:0;Object.assign(surface.style,{left:r.left+'px',top:r.top+crop+'px',width:r.width+'px',height:r.height-2*crop+'px'});}paintCursor();}
+ function mount(){
+ surface=document.createElement('div');surface.id='mobile-touch';surface.setAttribute('aria-label','直接触摸游戏画面');surface.hidden=true;document.body.append(surface);
+ surface.addEventListener('pointerdown',e=>{eventStop(e);if(!ready()||touch||joy||e.button!==0)return;const cancelOnly=!!walk;stopWalk();const r=canvas().getBoundingClientRect(),p=C.position(e.clientX,e.clientY,r);touch={cancelOnly,id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,at:performance.now(),moved:false,move:moveMode==='swipe'&&canMove()&&p.x>=.15&&p.x<.75};surface.setPointerCapture(e.pointerId);},true);
+ surface.addEventListener('pointermove',e=>{eventStop(e);if(touch?.id!==e.pointerId||!ready())return;const p=touch,g=C.gesture(p,e.clientX,e.clientY,performance.now());if(g.drag){p.moved=true;if(inputMode==='trackpad'){const r=canvas().getBoundingClientRect();cursor.x=Math.max(0,Math.min(1,cursor.x+(e.clientX-p.lastX)/r.width));const crop=canvas().dataset.approvedViewport==='verified-black-40-40';cursor.y=Math.max(crop?40/480:0,Math.min(440/480,cursor.y+(e.clientY-p.lastY)/r.height));window.__ci.sendMouseMotion(cursor.x,cursor.y*480/440);window.__ci.sendMouseSync();paintCursor();}else if(p.move&&canMove())setHeading(e.clientX-p.x,e.clientY-p.y,p.id);}p.lastX=e.clientX;p.lastY=e.clientY;},true);
+ surface.addEventListener('pointerup',e=>{eventStop(e);if(touch?.id!==e.pointerId)return;const p=touch,g=C.gesture(p,e.clientX,e.clientY,performance.now());release();if(inputMode==='direct'&&g.tap&&!joy&&!p.cancelOnly){const point=C.position(e.clientX,e.clientY,canvas().getBoundingClientRect()),x=point.x*640,y=point.y*440;if(moveMode==='tap'&&canMove()&&x>=100&&x<480&&y>=48&&y<430)walkTo(x,y);else clickAt(e.clientX,e.clientY,false);}},true);
+ surface.addEventListener('pointercancel',release);surface.addEventListener('lostpointercapture',()=>{if(touch)release();});surface.oncontextmenu=e=>e.preventDefault();
+ stick=document.createElement('div');stick.id='mobile-stick';stick.setAttribute('aria-label','移动摇杆');stick.hidden=true;knob=document.createElement('div');knob.textContent='移动';stick.append(knob);document.body.append(stick);
+ stick.addEventListener('pointerdown',e=>{eventStop(e);if(!canMove()||joy||touch)return;const r=stick.getBoundingClientRect();joy={id:e.pointerId,x:r.left+r.width/2,y:r.top+r.height/2};stick.setPointerCapture(e.pointerId);steer(e);});stick.addEventListener('pointermove',e=>{eventStop(e);steer(e);});for(const type of ['pointerup','pointercancel','lostpointercapture'])stick.addEventListener(type,e=>{if(joy?.id===e.pointerId)release();});
+ toolbar=document.createElement('div');toolbar.id='mobile-toolbar';toolbar.hidden=true;
+ const inputButton=button('',()=>{release();inputMode=inputMode==='direct'?'trackpad':'direct';localStorage.setItem('uw2-input-mode',inputMode);labels();paintCursor();});
+ const moveButton=button('',()=>{release();const modes=['swipe','joystick','tap'];moveMode=modes[(modes.indexOf(moveMode)+1)%modes.length];localStorage.setItem('uw2-move-mode',moveMode);labels();layout();if(moveMode==='tap')tell('点按寻路：城市可见地面，点选目的地；再触屏可停止。海上请用摇杆。');});
+ speedButton=button('',()=>showDeck('speed'));
+ function labels(){inputButton.textContent=inputMode==='direct'?'直触':'滑鼠';inputButton.setAttribute('aria-label','输入模式：'+inputButton.textContent);moveButton.textContent=moveMode==='swipe'?'滑动':moveMode==='tap'?'点按':'摇杆';moveButton.setAttribute('aria-label','移动模式：'+moveButton.textContent);speedButton.textContent='速度：'+speed/100+'×';}
+ toolbar.append(button('菜单',()=>showDeck(false)),inputButton,moveButton,speedButton,button('确认',()=>{release();window.K2UI.confirm();}),button('返回',()=>{release();window.K2UI.back();}),button('左键',()=>mouseButton(false)),button('右键',()=>mouseButton(true)));labels();document.body.append(toolbar);
+ cursorMark=document.createElement('div');cursorMark.id='mobile-cursor';cursorMark.hidden=true;cursorMark.setAttribute('aria-hidden','true');document.body.append(cursorMark);
+ routeLayer=document.createElementNS('http://www.w3.org/2000/svg','svg');routeLayer.id='mobile-route';routeLayer.setAttribute('viewBox','0 0 640 480');routeLayer.setAttribute('preserveAspectRatio','none');routeLayer.innerHTML='<polyline fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="5 5"/><circle r="6" fill="none" stroke="#ffee55" stroke-width="2"/>';routeLayer.setAttribute('hidden','');document.body.append(routeLayer);
+ for(const event of ['k2:ready','k2:load-complete'])addEventListener(event,()=>setTimeout(()=>{applySpeed();if(localStorage.getItem('uw2-muted')==='1'&&!window.K2App?.muted)window.K2App?.toggleSound();resumeAudio();},0));
+ document.addEventListener('pointerdown',()=>{const a=window.K2BootAudio?.state();if(a&&(a.phase!=='normal'||a.outputs.some(o=>o.context==='suspended')))resumeAudio();},true);
+ addEventListener('blur',release);document.addEventListener('visibilitychange',release);addEventListener('resize',()=>{release();layout();});setInterval(layout,100);
+ // Keep rendering independent from costly scene detection. Snapshots used by native save/load
+ // continue to call observeFrame directly, without this display-only throttle.
+ }
+ function flushFrame(){frameTimer=null;const f=pendingFrame;pendingFrame=null;if(!f||f.ci!==window.__ci)return;frameAt=performance.now();window.K2UI?.observeFrame(f.data,f.w,f.h);if(!canMove()&&(joy||heading))release();}
+ function observeFrame(data,w,h){
+   // The renderer owns a persistent ImageData buffer. Keep its latest contents,
+   // and always inspect the final frame even when the game stops repainting.
+   pendingFrame={data,w,h,ci:window.__ci};const wait=100-(performance.now()-frameAt);
+   if(wait<=0||window.__k2Booting){clearTimeout(frameTimer);flushFrame();}
+   else if(frameTimer===null)frameTimer=setTimeout(flushFrame,wait);
+ }
+ window.K2Mobile={bootOverlay,observeFrame,positionCanvas,isPlayClock,resumeAudio,open,close,closeDeck:hideDeck,cancel:release,state:()=>({heading,verified,panel:!!panel,deck:!!deck,inputMode,moveMode,speed,fill,cursor,walking:!!walk,route:walk?{current:walk.current,target:walk.target,remaining:walk.route.length,shift:walk.shift}:null,patches:activePatches})};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
+})();

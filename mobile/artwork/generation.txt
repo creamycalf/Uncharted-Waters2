@@ -1,0 +1,7 @@
+Android launcher icon, 0.5-mobile.
+Generated with the built-in image_gen tool, not the CLI.
+Master: mobile/artwork/launcher-icon.png
+Packaging: prepare-icons.ps1 resizes the master into Android density resources. Adaptive foreground uses an 11% inset. A small vector sailboat is provided for Android 13 themed monochrome icons.
+
+Final generation prompt:
+Create one polished Android launcher app icon for a personal mobile adaptation of the classic Age of Discovery sailing game Uncharted Waters II. Square 1024x1024 asset, full bleed dark midnight navy background with subtle teal ocean glow. A bold beautiful 16th-century sailing caravel, ivory billowing sails lit with warm gold, rich walnut hull and a single sweeping turquoise wave. A restrained brass compass rose behind the ship integrates into the composition. Premium hand-painted game emblem, elegant nostalgic adventure mood, sharply readable silhouette at 48px, simplified generous shapes rather than tiny rigging detail. ALL essential ship and compass shapes must fit within the centered 60 percent of the square width and height, so Android adaptive circular and squircle masks never cut the ship or sails. Outside that center safe region use only uninterrupted dark navy atmospheric background. No text, no letters, no numerals, no badge border, no pre-rounded corners, no watermark, no mockup, no phone. Deliver just the square icon artwork.

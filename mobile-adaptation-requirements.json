@@ -1,0 +1,94 @@
+{
+  "baseline": "Uncharted-Waters-2-Android-v7.8.apk",
+  "status": "mobile-test-apk-built",
+  "preservation": {
+    "defaultMode": "original-game-rules",
+    "preserve": [
+      "story",
+      "characters",
+      "maps",
+      "artwork",
+      "original-save-format"
+    ],
+    "exception": "Explicitly enabled trainer features may change the requested resources or statistics."
+  },
+  "controls": {
+    "characterMovement": "cancellable-pulsed-four-direction-swipe-or-joystick-and-experimental-visible-city-tap-navigation",
+    "shipControl": "eight-direction-swipe-or-joystick",
+    "interfaces": "direct-touch-or-trackpad-with-explicit-mouse-buttons",
+    "layout": "fill-or-native-aspect-viewport-with-bottom-toolbar",
+    "speed": "100-to-300-percent-emulated-clock-step-25-default-150",
+    "audio": "play-clock-aware-mute-release-and-persistent-user-mute-preference",
+    "directTouchScope": [
+      "character-selection",
+      "dialogue-options",
+      "menus",
+      "trading",
+      "numeric-input",
+      "save-load"
+    ],
+    "requirements": [
+      "release-movement-on-modal-entry",
+      "no-touch-through-on-modal-close",
+      "preserve-original-confirmations"
+    ]
+  },
+  "trainer": {
+    "entryLabel": "菜单 → 修改器",
+    "implemented": true,
+    "defaultEnabled": false,
+    "requested": [
+      {
+        "id": "no-food-consumption",
+        "label": "粮食不消耗",
+        "mode": "toggle",
+        "status": "implemented-boot-overlay-sea-travel-validation-pending"
+      },
+      {
+        "id": "no-water-consumption",
+        "label": "水不消耗",
+        "mode": "toggle",
+        "status": "implemented-boot-overlay-sea-travel-validation-pending"
+      },
+      {
+        "id": "set-money",
+        "label": "修改金钱",
+        "mode": "one-shot",
+        "status": "implemented-native-save-load-tested"
+      },
+      {
+        "id": "set-reputation",
+        "label": "修改声望",
+        "mode": "one-shot",
+        "status": "implemented-native-save-load-tested"
+      },
+      {
+        "id": "edit-ships-and-crew",
+        "label": "修改已有船只、船型、耐久、性能、水手、火炮和舱位",
+        "mode": "one-shot",
+        "status": "implemented-native-load-resave-tested-synthetic-chinese-fixture"
+      },
+      {
+        "id": "edit-owned-sailors",
+        "label": "修改主角及已加入海员的能力、等级、忠诚与技能",
+        "mode": "one-shot",
+        "status": "implemented-native-load-resave-tested-synthetic-chinese-fixture"
+      }
+    ],
+    "unresolvedUserText": null,
+    "requirements": [
+      "show-current-value-target-and-change-before-applying",
+      "verified-recoverable-backup-before-persistent-edits",
+      "do-not-assume-memory-addresses-or-valid-ranges",
+      "disable-writes-for-unrecognized-version-or-game-state",
+      "do-not-freeze-whole-inventory-to-prevent-consumption",
+      "turning-off-does-not-undo-already-applied-statistic-changes"
+    ]
+  },
+  "artifacts": {
+    "apk": "dist/Uncharted-Waters-2-Mobile-0.6.1.apk",
+    "sources": "dist/Mobile-Adaptation-Source-0.6.1.zip",
+    "verification": "dist/验证记录.json"
+  },
+  "applicationName": "大航海时代2"
+}

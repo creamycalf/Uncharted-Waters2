@@ -1,0 +1,41 @@
+# Locally supplied upstream APK, extracted game assets and generated builds
+*.apk
+*.aab
+*.idsig
+/inspection/
+/dist/
+/mobile/assets/
+/mobile/build/
+/.publish-local/
+
+# Local tooling, credentials and signing material
+node_modules/
+.env
+.env.*
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+local.properties
+.android-sdk/
+.idea/
+.vscode/
+*.log
+
+# Machine-specific diagnostics and historical release helpers
+/mobile/tools/check-dll.cjs
+/mobile/tools/start-emulator.ps1
+/mobile/tools/release06.cjs
+
+# Keep only current reproducible tests and fleet acceptance scripts in Git
+/mobile/tests/*
+!/mobile/tests/core.test.cjs
+!/mobile/tests/frame-scheduling.test.cjs
+!/mobile/tests/mobile04.test.cjs
+!/mobile/tests/fleet.test.cjs
+!/mobile/tests/fleet-fixture.cjs
+!/mobile/tests/fleet-runtime.cjs
+!/mobile/tests/fleet-roundtrip.cjs
+!/mobile/tests/fleet-form-guards.cjs
+!/mobile/tests/verify-apk.ps1

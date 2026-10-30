@@ -1,0 +1,25 @@
+大航海时代Ⅱ Android 适配项目：独立自有内容个人非商业使用许可
+版本 1.0 · 2026-10-21
+
+1. 适用范围
+本许可仅适用于发布者有权独立授权的自有文档、独立原创素材与独立程序部分。原作游戏、由原作资产提取的字库和素材，以及模拟器、第三方库和其衍生修改，均不因本文件变为发布者所有。本文件不是对整个 APK 的统一专有许可。
+
+2. 允许的使用
+对于适用本许可的独立自有内容，权利人授予有限、非独占、不可转让的许可，仅供个人非商业用途在本人拥有或控制的兼容设备上使用未修改发布版，并保留合理的个人备份。可以分享官方仓库和下载链接。
+
+3. 非商业用途与禁止修改
+未经权利人事先书面许可，不得将上述独立自有内容用于出售、收费分发、广告变现、商业交付、公司经营或其他直接或间接获利活动；不得修改、改编、补丁、二次打包、移除署名、替换签名、镜像或再分发适用本许可的内容；不得篡改许可证、产品说明、版本说明或冒充原发布者。GitHub 服务条款允许的平台内浏览、存储和 fork 权限不因此被取消。
+
+4. 第三方权利优先
+GPL 等第三方组件及其受该许可覆盖的修改继续按原许可提供。第三方许可授予的运行、复制、修改、商业使用和再分发权利不受第2、3条限制；本文件不取消其源码提供义务。受GPL覆盖的衍生作品不能通过本文件改为非商业、禁止修改的作品。适用范围不明时不能据此宣称第三方权利已被限制。
+
+5. 游戏权利与用户内容
+大航海时代Ⅱ游戏及其原作资产、名称和商标归各自权利人所有。本许可不授予原作资产使用或公开分发授权；非商业声明不等于原作授权。用户的合法存档与其他内容归原权利人所有。
+
+6. 无担保
+在适用法律允许范围内，适用本许可的内容按现状提供，不保证无错误、特定设备兼容或存档不丢失。请备份重要数据。本条不排除不可放弃的法定权利或依法不得排除的责任。
+
+7. 联系与终止
+授权事项可通过本仓库维护者提出，勿公开发送敏感信息。违反本许可可终止本许可授予的自有内容使用权；第三方许可和依法独立取得的权利不受影响。
+
+English summary: Independent publisher-owned material is licensed only for personal non-commercial use of unmodified releases. Modification, repackaging, commercial use and alteration of notices require prior written permission. These restrictions do not apply to third-party components, GPL-covered modifications or mandatory legal rights. Original game assets remain subject to their owners' rights. This document does not grant distribution rights to the original game or replace GPL obligations.
