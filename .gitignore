@@ -38,4 +38,9 @@ local.properties
 !/mobile/tests/fleet-runtime.cjs
 !/mobile/tests/fleet-roundtrip.cjs
 !/mobile/tests/fleet-form-guards.cjs
+!/mobile/tests/extras.test.cjs
+!/mobile/tests/extras-runtime.cjs
+!/mobile/tests/extras-resave.cjs
 !/mobile/tests/verify-apk.ps1
+!/mobile/tests/startup-cover.cjs
+!/mobile/tests/immersive-runtime.cjs

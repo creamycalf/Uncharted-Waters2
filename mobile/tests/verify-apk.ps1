@@ -9,7 +9,7 @@ try {
   if($entry.FullName.Contains('\')){throw "Invalid Android ZIP path: $($entry.FullName)"}
   if(!$names.Add($entry.FullName)){throw "Duplicate ZIP path: $($entry.FullName)"}
  }
- foreach($name in @('AndroidManifest.xml','classes.dex','assets/web/index.html','assets/web/mobile-core.js','assets/web/mobile-fleet.js','assets/web/mobile-trainer-form.js','assets/release-docs/genishs-MIT.txt','assets/web/mobile-motion.js','assets/web/mobile-navigation.js','assets/web/mobile-ui.js','assets/web/game/bundle.zip','assets/web/jsdos/wdosbox-x.wasm')){
+ foreach($name in @('AndroidManifest.xml','classes.dex','assets/web/index.html','assets/web/mobile-core.js','assets/web/mobile-extras.js','assets/web/guide.html','assets/web/catalog/ship-22.png','assets/web/mobile-fleet.js','assets/web/mobile-trainer-form.js','assets/release-docs/genishs-MIT.txt','assets/web/mobile-motion.js','assets/web/mobile-navigation.js','assets/web/mobile-ui.js','assets/web/game/bundle.zip','assets/web/jsdos/wdosbox-x.wasm')){
   if(!$archive.GetEntry($name)){throw "Missing required APK entry: $name"}
  }
  $root=(Resolve-Path $Assets).Path

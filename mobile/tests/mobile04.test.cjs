@@ -10,4 +10,4 @@ test('route finds a detour and refuses disconnected targets and water',()=>{
  const cells=Uint8Array.from([1,1,1,1,1,1,0,0,0,1,1,1,1,1,1]),grid={width:5,height:3,cells};const p=N.path(grid,{x:0,y:1},{x:4,y:1});assert.equal(p.length,6);assert(p.every(v=>cells[v.y*5+v.x]));assert.equal(N.path(grid,{x:0,y:1},{x:2,y:1}),null);
  const water={width:640,height:480,data:new Uint8ClampedArray(640*480*4)};for(let i=0;i<water.data.length;i+=4){water.data[i+1]=65;water.data[i+2]=211;water.data[i+3]=255;}assert.equal(N.ground(water,300,300),false);assert.equal(N.locate(water),null);
 });
-test('fill mode occupies full available rectangle without clipping original active frame',()=>{const r=C.viewport(1200,600,true,{},true);assert.equal(r.left,0);assert.equal(r.width,1200);assert(Math.abs(r.top+r.crop)<1e-6);assert(Math.abs(r.top+r.height-r.crop-544)<1e-6);});
+test('fill mode occupies full available rectangle without clipping original active frame',()=>{const r=C.viewport(1200,600,true,{},true);assert.equal(r.left,0);assert.equal(r.width,1200);assert(Math.abs(r.top+r.crop)<1e-6);assert(Math.abs(r.top+r.height-r.crop-600)<1e-6);});

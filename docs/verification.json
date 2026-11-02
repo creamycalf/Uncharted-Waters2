@@ -1,9 +1,9 @@
 {
-  "version": "0.6.1-mobile",
+  "version": "0.8-mobile",
   "package": "org.local.uw2mobile",
-  "apk": "Uncharted-Waters-2-Mobile-0.6.1.apk",
+  "apk": "Uncharted-Waters-2-Mobile-0.8.apk",
   "verification": {
-    "coreNodeTests": "17/17 passed: previous 12 plus Chinese ship/roster parsing, isolated writes, capacity and stale guards, ownership/name preservation, all six fleet markers and last save slot",
+    "coreNodeTests": "20/20 passed: prior 17 plus equipment byte isolation, full inventory atomic rejection and map/treasure/report/slot preservation",
     "javascriptSyntax": "passed",
     "apkV2Signature": "passed",
     "apkV3Signature": "passed",
@@ -18,9 +18,9 @@
     "backupRestore": "byte-for-byte equality with original test save",
     "backgroundProtection": "edited save retained; automatic native save suppressed while changes pending",
     "supplyPatchBootOverlay": "enabled patch bytes confirmed in emulator MAIN.EXE after restart",
-    "apkAssets": "219 files verified by Android slash-delimited names, lengths and SHA-256",
+    "apkAssets": "246 files verified by Android slash-delimited names, lengths and SHA-256",
     "regression": "0.1 APK rejected for backslash ZIP entries; 0.2 passes",
-    "upgrade": "Same package and certificate as 0.6; versionCode 7",
+    "upgrade": "Same package and certificate; versionCode 10",
     "mobile03BrowserRegression": "Passed on real DOSBox game: swipe return-to-origin and long-hold no-click, relative trackpad, left/right buttons, joystick release, 3600/3000 cycles, keypad/trainer, original native menu direct touch, save with overwrite confirmation, load and speed restoration, 640x360/800x450/1000x600 layout",
     "finalFrameRecognition": "Trailing inspection runs after last render; static popup recognized; stale engine frames discarded",
     "mobile04BrowserRegression": "Passed: actual character reversal, stop; tap route around building to (352,172); scrolling route down pier to (288,412); reject water; cancel route without retargeting; six 1x-3x presets; fill/aspect; 3x native save/load; mute preserved through background/foreground",
@@ -29,7 +29,12 @@
     "fleetRuntime": "Real DOS engine in Chromium using synthetic ship/companion in actual Chinese save; native ship page confirmed Tekkousen, hull 99/100, turn 97/80, power 98/85, crew 120/300 and cargo 800; sailor page confirmed visible stats 100, navigation 50, battle 45 and all skills",
     "fleetPersistence": "Native re-save retains edits including loyalty; invalid crew count changes no bytes; full-file backup restores byte-for-byte",
     "fleetForm": "Cross-category drafts retained and applied in one transaction; presets use latest entered limits; empty records disable writes; record switch clears drafts; 640/800-wide layouts fit",
-    "applicationName": "aapt2 confirms exact Android application-label 大航海时代2; HTML title matches"
+    "applicationName": "aapt2 confirms exact Android application-label 大航海时代2; HTML title matches",
+    "equipmentMapRuntime": "Actual Chinese record 2 edited through touch form; native load and native re-save retain weapon 76, armor 75, 130 known ports and 88 ordinary villages; full chart visually inspected",
+    "guide": "Offline guide opened through menu; every embedded image loaded; returned to gameplay",
+    "actionButtons": "Direct mode shows confirm/back; trackpad shows left/right; trainer top-level beside menu",
+    "startupCover": "1200x540, 1000x600, 640x360 homepage fills viewport. Actual DOS startup audit: 263 animation frames, zero uncovered; DOSBOX-X / KOUKAI2 / MAIN observed; ready removes cover and shows character selection. Continue from homepage also displayed opaque loading cover and reached saved city.",
+    "immersive": "Real DOS city at 1200x540 and 640x360: full touch viewport, collapsed/expanded tools, direct touch original menu, joystick hides in popup and returns after closing, confirm/back contextual visibility, trackpad mouse controls, trainer accessible."
   },
   "notVerified": [
     "continuous sea travel consumption comparison",
@@ -39,7 +44,9 @@
     "Android runtime and physical-device frame pacing",
     "tap navigation across every city and every protagonist; only Seville sample validated",
     "automatic sea navigation and cross-map routing are not implemented",
-    "All 25 ship types and every companion in prolonged play; fleet trainer engine validation used a synthetic Chinese test fixture"
+    "All 25 ship types and every companion in prolonged play; fleet trainer engine validation used a synthetic Chinese test fixture",
+    "Every equipment item and long-term discovery/treasure quest interactions",
+    "0.8 contextual controls across every dialogue, sea battle and Android device"
   ],
   "androidTestBlocker": "Local emulator process exited with Windows 0xC0000135 before boot; no test device connected.",
   "notes": [
@@ -49,8 +56,8 @@
     "Dk2Edit used for feature discovery, not embedded as an EXE. MIT research from JohanLi and genishs informed the independently checked Chinese layout; both license texts are bundled.",
     "Original Chinese names are preserved; trainer selection uses role/level/ID or ship order. No forced recruitment or new-ship creation."
   ],
-  "fixedIssue": "0.6 extends trainer with per-owned-ship and per-owned-sailor edits; earlier movement/audio/startup fixes retained.",
-  "regressionScope": "0.6.1 changes application label, HTML title and version metadata only; gameplay validation remains from 0.6 and earlier.",
-  "sha256": "dbd3e15062a50e3d841f6e83ffe42f59222e65b6aaa5981e67666526f9a1d5d1",
+  "fixedIssue": "0.8 removes reserved toolbar area and adds floating contextual controls.",
+  "regressionScope": "0.8: 20 Node tests, real DOS city/menu touch and contextual controls, APK 246 assets and v2/v3 signature. Other results above are historical.",
+  "sha256": "1a823793846b52d374885f8b314a3aa6ee21698fc7a7e7087857ee0c4cef0cb5",
   "applicationName": "大航海时代2"
 }

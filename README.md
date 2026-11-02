@@ -8,19 +8,37 @@
 
 保留原作剧情、人物、地图和内容。游戏通过 DOSBox-X / js-dos 运行，外层使用 Android WebView；不是重写游戏引擎。修改器和水粮补丁由玩家自行启用。
 
-**当前版本：0.6.1 · 测试版 · Android 8.0 及以上 · 横屏**
+**当前版本：0.8 · 测试版 · Android 8.0 及以上 · 横屏**
 
-[下载 APK](https://github.com/creamycalf/Uncharted-Waters2/releases/download/v0.6.1/Uncharted-Waters-2-Mobile-0.6.1.apk) · [版本说明与全部附件](https://github.com/creamycalf/Uncharted-Waters2/releases/tag/v0.6.1) · [反馈问题](https://github.com/creamycalf/Uncharted-Waters2/issues)
+[下载 APK](https://github.com/creamycalf/Uncharted-Waters2/releases/download/v0.8/Uncharted-Waters-2-Mobile-0.8.apk) · [版本说明与全部附件](https://github.com/creamycalf/Uncharted-Waters2/releases/tag/v0.8) · [反馈问题](https://github.com/creamycalf/Uncharted-Waters2/issues)
 
 ## 安装与更新
 
 1. 从上方链接下载安装 APK，允许安装该来源的应用。
 2. 已安装本仓库之前的适配版，可直接**覆盖安装，不要先卸载**，以保留应用内存档。
-3. 启动后横屏游玩；先熟悉底部的“菜单、确认、返回、左键、右键”。
+3. 启动后横屏游玩；0.7 的修改器与菜单平级，直触显示确认/返回，滑鼠显示左键/右键。
 
 应用名称为 **大航海时代2**，包名为 `org.local.uw2mobile`。它与原作者的应用是不同安装包，可并存，但不会自动读取原应用的私有存档。首次安装的十条存档为空，不含测试存档。
 
 当前 APK 使用固定的本地测试证书签名，属于预发布测试版本。源码仓库不包含签名私钥；自行构建会生成自己的测试证书，通常不能直接覆盖这里发布的 APK。
+
+## 0.8 更新
+
+游戏铺满可用屏幕，取消固定底栏；以悬浮“工具”展开菜单、修改器、速度与操作模式。移动时隐藏确认/返回，菜单或对话时显示；摇杆只在可移动场景显示，数量输入按需出现。展开工具可使用备用按键。
+
+## 0.7.1 本地更新
+
+首页和启动加载图铺满屏幕，以不透明背景遮住 DOSBox；进入游戏及读档重启均在就绪后撤下加载层。
+
+## 0.7 本地更新
+
+- 修改器移到底部。直触显示确认/返回，滑鼠显示左键/右键，两组输入语义不同。
+- 新增武器、防具选择及攻击/防御数值；物品栏满时拒绝新增。
+- 新增海图、130 港口和普通村落解锁，保留藏宝记录、剧情与发现奖励流程。
+- 25 种船型配原版图片、基础能力和用途参考；船型替换不改变造船厂售卖条件。
+- 菜单新增离线图文入门攻略。
+
+GitHub Release 提供 0.8 安装包；本地 APK 位于 `dist/Uncharted-Waters-2-Mobile-0.8.apk`。
 
 ## 手机操作
 
@@ -41,13 +59,14 @@
 
 ## 内置修改器
 
-入口：**菜单 → 修改器**。
+入口：**工具 → 修改器（与菜单平级）**。
 
 | 分类 | 可修改内容 |
 | --- | --- |
 | 金钱与声望 | 金币、交易声望、海盗声望、冒险声望。 |
 | 船只与水手 | 已有船只的船型、当前/最大耐久、推进、转向、水手人数与舱位、火炮数量与炮舱、货舱容量。 |
 | 海员能力 | 主角及已加入海员的八项能力、航海/战斗等级、忠诚度，以及交涉、会计、炮术、制图、测量技能。 |
+| 武器与地图（0.7） | 选择武器、防具并查看攻击/防御；解锁全海图、港口和普通村落。藏宝记录与奖励状态保留。 |
 | 快捷填入 | 修复到耐久上限、水手补至舱位、八项能力 100、学会全部技能。仍须点击应用才会写入。 |
 | 航行补丁 | 航行不耗粮食、不耗水；默认关闭，**下次启动游戏时生效**。 |
 
@@ -77,6 +96,7 @@
 
 | 版本 | 主要变化 |
 | --- | --- |
+| **0.7（本地）** | 独立修改器入口、按模式精简按钮、装备与地图编辑、船型图鉴、离线图文攻略。 |
 | **0.6.1** | 应用名称统一为“大航海时代2”。 |
 | 0.6 | 新增船只、水手与海员编辑；分类表单、容量检查、统一备份应用。 |
 | 0.5 | 更换帆船与罗盘图标，支持自适应及 Android 13 主题单色图标。 |
@@ -85,10 +105,11 @@
 
 ## 测试情况与当前限制
 
-- 17 项 Node 测试通过，覆盖存档字段、数据范围、指定对象隔离、方向切换、寻路及布局等。
+- 20 项 Node 测试通过，覆盖存档字段、数据范围、指定对象隔离、方向切换、寻路及布局等。
 - 在桌面浏览器运行真实 DOS 引擎，检查过选人触摸、菜单、移动、音乐、存读档，以及修改后的原游戏信息页。
 - 船只/海员验收使用基于中文版实际初始存档构造的测试对象；原生重新保存后修改仍保留，备份恢复通过逐字节比较。
-- APK 的 219 个资源文件路径、长度和 SHA-256 校验通过，v2/v3 签名验证通过。
+- 0.7 装备与地图编辑通过原生重新保存验证；攻略图片加载、关闭后返回游戏和两组操作按钮切换通过。
+- 0.7 APK 的 246 个资源文件路径、长度和 SHA-256 校验通过，v2/v3 签名验证通过。
 - **尚未完成 Android 真机性能及全剧情验收**，不能保证所有手机、城市、人物和菜单均无问题。
 - 点按寻路主要在塞维尔港验证；其他城市可能无法识别。无法寻路时可切回摇杆或滑动。
 - 水粮补丁已核对程序特征和启动加载；连续海上航行的耗粮耗水对照验收仍未完成。
@@ -122,14 +143,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File mobile/tools/build.ps1 `
   -JdkRoot "C:\Java\jdk-21"
 ```
 
-也可通过 `ANDROID_HOME`（或 `ANDROID_SDK_ROOT`）及 `JAVA_HOME` 指定路径。输出为 `dist/Uncharted-Waters-2-Mobile-0.6.1.apk`。首次构建生成 `mobile/build/local-test.jks`；后续自行发布时应妥善保存，勿提交到仓库。
+也可通过 `ANDROID_HOME`（或 `ANDROID_SDK_ROOT`）及 `JAVA_HOME` 指定路径。输出为 `dist/Uncharted-Waters-2-Mobile-0.8.apk`。首次构建生成 `mobile/build/local-test.jks`；后续自行发布时应妥善保存，勿提交到仓库。
 
 ### 验证与浏览器预览
 
 构建完成，或先运行 `mobile/tools/bootstrap.ps1` 提取测试所需的原版程序后，执行：
 
 ```powershell
-node --test mobile/tests/core.test.cjs mobile/tests/frame-scheduling.test.cjs mobile/tests/mobile04.test.cjs mobile/tests/fleet.test.cjs
+node --test mobile/tests/core.test.cjs mobile/tests/frame-scheduling.test.cjs mobile/tests/mobile04.test.cjs mobile/tests/fleet.test.cjs mobile/tests/extras.test.cjs
 ```
 
 浏览器预览：
@@ -160,3 +181,7 @@ docs/              安装效果截图、验证记录和上游权利说明
 感谢 [maxleolee-eng 的 Android 适配项目](https://github.com/maxleolee-eng/Uncharted-Waters-2-Android)、[JohanLi 的逆向研究](https://github.com/JohanLi/uncharted-waters-2-research) 和 [genishs 的存档编辑器](https://github.com/genishs/dh2-py-editor)。后两者的 MIT 许可文本保存在 `mobile/licenses/`，并随 APK 保留。[Dk2Edit 讨论](https://www.xycq.org.cn/forum/viewthread.php?page=1&tid=71167) 用于功能调研，其 Windows EXE 未嵌入本应用。
 
 原游戏、名称、商标及游戏素材归各自权利人所有，本项目不是 KOEI 官方 Android 版本。不同来源的代码与素材适用各自许可，**不以本仓库统一授权整个 APK**。上游原始许可、第三方说明和对应 GPL 组件源码说明见 [NOTICE](NOTICE.md)；Release 同时提供上游 v7.8 的 GPL 组件源码归档。
+
+## 封版交接
+
+[0.8 技术交接与已知问题](docs/HANDOFF-0.8.md) · [0.8 发布说明](docs/releases/v0.8.md)
