@@ -8,19 +8,29 @@
 
 保留原作剧情、人物、地图和内容。游戏通过 DOSBox-X / js-dos 运行，外层使用 Android WebView；不是重写游戏引擎。修改器和水粮补丁由玩家自行启用。
 
-**当前版本：0.8 · 测试版 · Android 8.0 及以上 · 横屏**
+**当前版本：0.8.2 · 测试版 · Android 8.0 及以上 · 横屏**
 
-[下载 APK](https://github.com/creamycalf/Uncharted-Waters2/releases/download/v0.8/Uncharted-Waters-2-Mobile-0.8.apk) · [版本说明与全部附件](https://github.com/creamycalf/Uncharted-Waters2/releases/tag/v0.8) · [反馈问题](https://github.com/creamycalf/Uncharted-Waters2/issues)
+[下载 APK](https://github.com/creamycalf/Uncharted-Waters2/releases/download/v0.8.2/Uncharted-Waters-2-Mobile-0.8.2.apk) · [版本说明与全部附件](https://github.com/creamycalf/Uncharted-Waters2/releases/tag/v0.8.2) · [反馈问题](https://github.com/creamycalf/Uncharted-Waters2/issues)
 
 ## 安装与更新
 
 1. 从上方链接下载安装 APK，允许安装该来源的应用。
 2. 已安装本仓库之前的适配版，可直接**覆盖安装，不要先卸载**，以保留应用内存档。
-3. 启动后横屏游玩；0.7 的修改器与菜单平级，直触显示确认/返回，滑鼠显示左键/右键。
+3. 启动后横屏游玩；展开“工具”后可看到平级的菜单、修改器、攻略；移动和对话按场景显示操作按钮。
 
 应用名称为 **大航海时代2**，包名为 `org.local.uw2mobile`。它与原作者的应用是不同安装包，可并存，但不会自动读取原应用的私有存档。首次安装的十条存档为空，不含测试存档。
 
 当前 APK 使用固定的本地测试证书签名，属于预发布测试版本。源码仓库不包含签名私钥；自行构建会生成自己的测试证书，通常不能直接覆盖这里发布的 APK。
+
+## 0.8.2 更新
+
+展开“工具”后直接点“攻略”，与“菜单”“修改器”平级。
+
+## 0.8.1 更新
+
+攻略首页改为六位主角：约翰、卡特琳娜、奥托、恩斯特、皮耶德、阿兰。新增 57 个主线关键步骤，逐项显示触发条件、前往地点和卡点；原版头像、行程示意、当前人物搜索、手动阅读勾选均可离线使用。旧通用图文说明保留在独立入口。
+
+资料与版本差异见 [人物攻略来源](mobile/docs/guide-sources.md)。尚未完成六个人物在本 APK 的逐项通关验收。GitHub Release 提供 0.8.2 安装包，本地成品为 `dist/Uncharted-Waters-2-Mobile-0.8.2.apk`。
 
 ## 0.8 更新
 
@@ -38,7 +48,7 @@
 - 25 种船型配原版图片、基础能力和用途参考；船型替换不改变造船厂售卖条件。
 - 菜单新增离线图文入门攻略。
 
-GitHub Release 提供 0.8 安装包；本地 APK 位于 `dist/Uncharted-Waters-2-Mobile-0.8.apk`。
+最新安装包见页面顶部的 0.8.2 下载链接。
 
 ## 手机操作
 
@@ -83,6 +93,14 @@ GitHub Release 提供 0.8 安装包；本地 APK 位于 `dist/Uncharted-Waters-2
 水手、火炮和耐久有相应容量检查；降低货舱容量时，会检查已有货物和补给。换船型保留船名、材质、现有性能和舱位；原游戏再次改造或计算船只属性时，可能按船型重新计算。没有装炮的船，需要先在原游戏造船厂装炮。
 
 原游戏内中文姓名保持原样。修改器暂以职务、等级和存档编号区分海员，以队伍顺序区分船只；ASCII 名称可以直接显示。当前不提供新建船只、强制招募剧情人物或全世界同类船模板修改，也不是完整移植 Dk2Edit。
+
+## 人物攻略
+
+在“工具”第一层点击“攻略”，选择人物查看主线。阅读勾选只记录查阅进度，不会修改游戏任务。
+
+| 六位主角入口 | 条件与卡关排查 |
+| --- | --- |
+| ![人物攻略首页](docs/images/guide-characters.png) | ![人物主线步骤](docs/images/guide-steps.png) |
 
 ## 实际效果
 
@@ -143,7 +161,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File mobile/tools/build.ps1 `
   -JdkRoot "C:\Java\jdk-21"
 ```
 
-也可通过 `ANDROID_HOME`（或 `ANDROID_SDK_ROOT`）及 `JAVA_HOME` 指定路径。输出为 `dist/Uncharted-Waters-2-Mobile-0.8.apk`。首次构建生成 `mobile/build/local-test.jks`；后续自行发布时应妥善保存，勿提交到仓库。
+也可通过 `ANDROID_HOME`（或 `ANDROID_SDK_ROOT`）及 `JAVA_HOME` 指定路径。输出为 `dist/Uncharted-Waters-2-Mobile-0.8.2.apk`。首次构建生成 `mobile/build/local-test.jks`；后续自行发布时应妥善保存，勿提交到仓库。
 
 ### 验证与浏览器预览
 
@@ -184,4 +202,4 @@ docs/              安装效果截图、验证记录和上游权利说明
 
 ## 封版交接
 
-[0.8 技术交接与已知问题](docs/HANDOFF-0.8.md) · [0.8 发布说明](docs/releases/v0.8.md)
+[0.8.2 技术交接与已知问题](docs/HANDOFF-0.8.2.md) · [0.8.2 发布说明](docs/releases/v0.8.2.md)

@@ -1,0 +1,22 @@
+(function(){'use strict';
+ const characters=window.K2GuideCharacters,grid=document.getElementById('characters'),panel=document.getElementById('character-guide'),basics=document.getElementById('basics'),search=document.getElementById('guide-search'),status=document.getElementById('guide-status');let selected;
+ function get(key,fallback){try{return JSON.parse(localStorage.getItem(key))??fallback;}catch{return fallback;}}
+ function save(key,value){try{localStorage.setItem(key,JSON.stringify(value));}catch{status.textContent='当前无法保存阅读勾选；攻略仍可查看。';}}
+ const completed=get('uw2-guide-checks-v1',{});
+ function node(tag,text,cls){const e=document.createElement(tag);if(text)e.textContent=text;if(cls)e.className=cls;return e;}
+ function show(id,scroll=true){selected=characters.find(x=>x.id===id);basics.hidden=!!selected;panel.hidden=!selected;search.hidden=!selected;search.value='';save('uw2-guide-character-v1',id);for(const b of grid.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.character===id));panel.replaceChildren();
+  if(selected){const c=selected,header=node('div',null,'character-heading'),img=node('img');img.src='catalog/hero-'+c.portrait+'.png';img.alt=c.name;const intro=node('div');intro.append(node('h1',c.name+' · 人物主线'),node('p',c.alias+'｜推进重点：'+c.focus,'muted'));header.append(img,intro);panel.append(header,node('p',c.intro));
+   const route=node('div',null,'route');route.setAttribute('aria-label','主线行程示意');c.route.forEach((place,i)=>{if(i)route.append(node('span','→','arrow'));route.append(node('span',place,'stop'));});panel.append(route,node('p','含结局剧透。勾选只记录你读到哪一步，不会读取游戏任务状态，也不区分不同存档。','muted'));
+   const progress=node('p',null,'progress');progress.id='guide-progress';panel.append(progress);const clear=node('button','清除本人物勾选');clear.className='reset';clear.onclick=()=>{for(let i=0;i<c.steps.length;i++)delete completed[c.id+'-'+i];save('uw2-guide-checks-v1',completed);show(c.id,false);};panel.append(clear);
+   c.steps.forEach(([title,gate,action,pitfall],i)=>{const article=node('article',null,'quest-step');article.dataset.search=[title,gate,action,pitfall].join(' ');const label=node('label',null,'quest-title'),check=node('input');check.type='checkbox';check.checked=!!completed[c.id+'-'+i];check.setAttribute('aria-label','完成：'+title);check.onchange=()=>{completed[c.id+'-'+i]=check.checked;save('uw2-guide-checks-v1',completed);article.classList.toggle('checked',check.checked);count();};article.classList.toggle('checked',check.checked);label.append(check,node('strong',(i+1)+'. '+title));article.append(label,node('p',gate,'gate'),node('p',action),node('p','卡点：'+pitfall,'pitfall'));panel.append(article);});
+   const troubleshooting=node('aside',null,'troubleshooting');troubleshooting.append(node('h2','卡关先查'));c.trouble.forEach(t=>troubleshooting.append(node('p',t)));panel.append(troubleshooting);
+   const source=node('p',null,'muted source');source.append(document.createTextNode('本人物主线整理依据：Johan Li 的 DOS 剧本解码研究（MIT）。英文人名与中文译名不同，随机目标以本局对话为准。'));const link=node('a','查看研究来源地址');link.href='https://github.com/JohanLi/uncharted-waters-2-research/blob/main/game-details/scenarios/'+c.source;link.target='_blank';link.rel='noopener';source.append(document.createElement('br'),link);panel.append(source);count();
+  }
+  status.textContent=selected?'已打开'+selected.name+'，可搜索地名、任务或声望。':'通用攻略：补给、贸易、船型、战斗与修改器用法。';if(scroll)(selected?search:basics).scrollIntoView({block:'start'});
+ }
+ function count(){if(!selected)return;const n=selected.steps.filter((_,i)=>completed[selected.id+'-'+i]).length;document.getElementById('guide-progress').textContent='已勾选 '+n+' / '+selected.steps.length+' 步';}
+ for(const c of characters){const b=node('button',null,'character-card'),img=node('img');b.dataset.character=c.id;img.src='catalog/hero-'+c.portrait+'.png';img.alt='';b.append(img,node('span',c.name),node('small',c.focus));b.onclick=()=>show(c.id);grid.append(b);}
+ const common=node('button','通用图文攻略','character-card common');common.dataset.character='basics';common.onclick=()=>show('basics');grid.append(common);
+ search.oninput=()=>{let n=0;const q=search.value.trim().toLocaleLowerCase();for(const a of panel.querySelectorAll('.quest-step')){a.hidden=!a.dataset.search.toLocaleLowerCase().includes(q);if(!a.hidden)n++;}status.textContent=q?'本人物匹配 '+n+' 个步骤；清空搜索显示全部。':'显示本人物全部步骤。';};
+ show(get('uw2-guide-character-v1','joao'),false);
+})();

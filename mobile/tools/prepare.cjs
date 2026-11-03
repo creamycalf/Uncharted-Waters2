@@ -2,8 +2,8 @@ const fs=require('fs'),path=require('path');
 const root=path.resolve(__dirname,'..'),web=path.join(root,'assets/web'),original=path.resolve(root,'../inspection/assets/web');
 function write(file,s){fs.writeFileSync(path.join(web,file),s);}
 function replace(s,a,b){if(!s.includes(a))throw Error('Expected upstream source missing: '+a.slice(0,80));return s.replace(a,b);}
-for(const f of ['mobile-core.js','mobile-extras.js','guide.html','mobile-fleet.js','mobile-trainer-form.js','mobile-motion.js','mobile-navigation.js','mobile-ui.js','mobile.css'])fs.copyFileSync(path.join(root,'src',f),path.join(web,f));
-write('build-info.json',JSON.stringify({versionName:'7.8-mobile.8',versionCode:10}));
+for(const f of ['mobile-core.js','mobile-extras.js','guide.html','guide-data.js','guide-app.js','mobile-fleet.js','mobile-trainer-form.js','mobile-motion.js','mobile-navigation.js','mobile-ui.js','mobile.css'])fs.copyFileSync(path.join(root,'src',f),path.join(web,f));
+write('build-info.json',JSON.stringify({versionName:'7.8-mobile.8.2',versionCode:12}));
 let skin=fs.readFileSync(path.join(original,'approved-skin.js'),'utf8');
 // Fill the viewport with art while keeping buttons/text in their original safe layout.
 skin=replace(skin,'f=place(start,d[0],d[1]);','f=fitFor(d[0],d[1]);[startControls,footer].forEach(function(el){el.style.width=d[0]+"px";el.style.height=d[1]+"px";el.style.transform="translate("+f.x+"px,"+f.y+"px) scale("+f.scale+")";});');

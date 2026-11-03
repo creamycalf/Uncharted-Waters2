@@ -44,3 +44,4 @@ local.properties
 !/mobile/tests/verify-apk.ps1
 !/mobile/tests/startup-cover.cjs
 !/mobile/tests/immersive-runtime.cjs
+!/mobile/tests/guide-ui.cjs

@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-11-03",
+  "license": "MIT; mobile/licenses/JohanLi-MIT.txt",
+  "scope": "Locally downloaded primary DOS scenario research used for the Chinese walkthrough; game campaign not fully revalidated.",
+  "files": [
+    {
+      "url": "https://github.com/JohanLi/uncharted-waters-2-research/blob/main/game-details/scenarios/scenario-1-joao-franco.md",
+      "sha256": "fea2667f148243e7c6db437a3c939117fec0b21dedafc61dd48e98cfd4a8aa6a"
+    },
+    {
+      "url": "https://github.com/JohanLi/uncharted-waters-2-research/blob/main/game-details/scenarios/scenario-2-catalina-erantzo.md",
+      "sha256": "36c75c3560129b759bbf3c55d4318eb8828fcb9790163e3d0ec02c0d615d20b6"
+    },
+    {
+      "url": "https://github.com/JohanLi/uncharted-waters-2-research/blob/main/game-details/scenarios/scenario-3-otto-baynes.md",
+      "sha256": "bf0da2a66b8b00e0e460081273fbf6aaaa717140c7f9654b8ec550589d952e04"
+    },
+    {
+      "url": "https://github.com/JohanLi/uncharted-waters-2-research/blob/main/game-details/scenarios/scenario-4-ernst-von-bohr.md",
+      "sha256": "7cac6eed5aa16dc7dc7ffd4751cceca8c7fc0ee2e521add2202f1d13d4f01bc6"
+    },
+    {
+      "url": "https://github.com/JohanLi/uncharted-waters-2-research/blob/main/game-details/scenarios/scenario-5-pietro-conti.md",
+      "sha256": "f7e60598b2b7df21dfe68dbd889a7754a209a11b8c2b1236d188ea0bcd6dda29"
+    },
+    {
+      "url": "https://github.com/JohanLi/uncharted-waters-2-research/blob/main/game-details/scenarios/scenario-6-ali-vezas.md",
+      "sha256": "9576d61a3edb4d2ac0fffceec4ad2b3876f9fa89e3ba2077477a4d08af514ffd"
+    }
+  ]
+}
