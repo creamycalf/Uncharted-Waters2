@@ -32,3 +32,9 @@
 #mobile-toolbar.expanded{padding:8px;border-radius:14px;background:#071a29ed;max-width:min(760px,calc(100vw - 24px))}
 #mobile-stick{bottom:max(16px,env(safe-area-inset-bottom));opacity:.7}
 #mobile-stick:active{opacity:1}
+/* Make controller/keyboard selection visible on the custom startup and save screens. */
+html.k2-hardware-nav #k2-approved-start .skin-button:focus,
+html.k2-hardware-nav #k2-save-dialog button:focus{outline:4px solid #ff8a00!important;outline-offset:3px;filter:brightness(1.16);z-index:2}
+html.k2-hardware-nav #k2-approved-stage button[data-action^="key-"]:focus{outline:4px solid #ff8a00!important;outline-offset:3px;filter:brightness(1.2);z-index:50}
+html.k2-hardware-nav #mobile-toolbar button:focus,
+html.k2-hardware-nav #mobile-deck button:focus{outline:3px solid #ff8a00;outline-offset:2px}
