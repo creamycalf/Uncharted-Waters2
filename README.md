@@ -8,7 +8,10 @@
 
 保留原作剧情、人物、地图和内容。游戏通过 DOSBox-X / js-dos 运行，外层使用 Android WebView；不是重写游戏引擎。修改器和水粮补丁由玩家自行启用。
 
-**当前版本：0.8.2 · 测试版 · Android 8.0 及以上 · 横屏**
+0.9.2 输入分支在前序适配基础上增加键盘和手柄控制。方向键、A/B 确认/返回、摇杆、四组肩键/扳机映射，以及启动菜单和存档列表导航已在 iPlay 50 Mini 上验证；其他安卓设备、模拟器和手柄型号仍待验收。本项目仍是 Android APK，需要运行在 Android 设备或 Android 模拟器上，不是 Windows/macOS 原生 PC 版。
+
+**公开测试版：0.8.2 · Android 8.0 及以上 · 横屏**
+**本地硬件输入测试构建：0.9.2-input-test**（键盘、手柄、肩键快捷操作及启动/存档界面导航）
 
 [下载 APK](https://github.com/creamycalf/Uncharted-Waters2/releases/download/v0.8.2/Uncharted-Waters-2-Mobile-0.8.2.apk) · [版本说明与全部附件](https://github.com/creamycalf/Uncharted-Waters2/releases/tag/v0.8.2) · [反馈问题](https://github.com/creamycalf/Uncharted-Waters2/issues)
 
@@ -18,9 +21,19 @@
 2. 已安装本仓库之前的适配版，可直接**覆盖安装，不要先卸载**，以保留应用内存档。
 3. 启动后横屏游玩；展开“工具”后可看到平级的菜单、修改器、攻略；移动和对话按场景显示操作按钮。
 
-应用名称为 **大航海时代2**，包名为 `org.local.uw2mobile`。它与原作者的应用是不同安装包，可并存，但不会自动读取原应用的私有存档。首次安装的十条存档为空，不含测试存档。
+公开版应用名称为 **大航海时代2**，包名为 `org.local.uw2mobile`。本地输入测试构建使用独立包名 `org.local.uw2mobile.inputtest`，可与公开版并存；两者的游戏记录互不共享。首次启动的记录为空，不含测试存档。
 
 当前 APK 使用固定的本地测试证书签名，属于预发布测试版本。源码仓库不包含签名私钥；自行构建会生成自己的测试证书，通常不能直接覆盖这里发布的 APK。
+
+## 0.9.2-input-test 本地硬件输入改动
+
+- 键盘：方向键或 WASD 移动；Enter/空格确认；Escape/Backspace 返回；M 展开工具；F1 打开游戏菜单。首次启动菜单自动聚焦到可用选项；启动菜单和存档列表可用方向键移动焦点、Enter/空格选择，Escape/Backspace 关闭存档列表。工具、菜单或修改器打开时，方向键循环移动控件焦点。
+- 手柄：十字键或左摇杆移动；A 确认；B 返回；X/Y 左键/右键；Start 展开工具；Select 打开菜单。右摇杆移动鼠标指针。模拟城市四向、海上八向输入，并使用摇杆死区。
+- 肩键快捷操作：LB/L1=情报，LT/L2=经营，RB/R1=命令，RT/R2=航海术。扳机按钮与模拟扳机轴均受支持；按下时切换游戏右侧对应标签。四组映射已在 iPlay 50 Mini 上实机验证。
+- 手柄：启动菜单和存档列表支持十字键/左摇杆移动焦点、A 确认、B 返回；当前选项带醒目的橙色焦点框。存档选择框会优先聚焦可用记录，空记录不可选。
+- 切换应用、失去窗口焦点或移除手柄时释放按住的方向。文本框获得焦点时，键盘输入交还给 WebView。
+- 生成测试 APK：`dist/Uncharted-Waters-2-Mobile-0.9.2-input-test.apk`。同包名及本机测试签名允许覆盖更新 0.9.1，并保留测试版本地数据；不会读取公开版存档。
+- iPlay 50 Mini 上已验证方向键、A/B、摇杆、肩键映射，以及 0.9.2 新增的启动菜单与存档焦点导航。详情见 [当前交接](docs/handoff.md)。
 
 ## 0.8.2 更新
 
@@ -138,9 +151,9 @@
 
 ## 从源码构建
 
-目前构建脚本面向 **Windows PowerShell**，不依赖 Gradle。
+Windows 使用 PowerShell 构建；macOS 可运行 `bash mobile/tools/build-macos.sh`，同样不依赖 Gradle。
 
-需要：Git、Node.js 20+、JDK 21、Android SDK Platform 36、Build Tools 36.0.0，以及 Windows 自带的 `tar`。
+需要：Git、Node.js 20+、JDK 21+、Android SDK Platform 36+、Build Tools 36.0.0。macOS 构建使用系统 `unzip` 和 Python 3；Windows 构建另需 PowerShell 与系统 `tar`。
 
 ```powershell
 git clone https://github.com/creamycalf/Uncharted-Waters2.git
@@ -194,12 +207,12 @@ mobile/licenses/   修改器参考实现的许可文本
 docs/              安装效果截图、验证记录和上游权利说明
 ```
 
-## 来源与许可
+## 来源、致谢与许可
 
-感谢 [maxleolee-eng 的 Android 适配项目](https://github.com/maxleolee-eng/Uncharted-Waters-2-Android)、[JohanLi 的逆向研究](https://github.com/JohanLi/uncharted-waters-2-research) 和 [genishs 的存档编辑器](https://github.com/genishs/dh2-py-editor)。后两者的 MIT 许可文本保存在 `mobile/licenses/`，并随 APK 保留。[Dk2Edit 讨论](https://www.xycq.org.cn/forum/viewthread.php?page=1&tid=71167) 用于功能调研，其 Windows EXE 未嵌入本应用。
+特别感谢 [maxleolee-eng](https://github.com/maxleolee-eng/Uncharted-Waters-2-Android) 创建原始 Android 触屏适配项目，也感谢 [Creamy Calf](https://github.com/creamycalf/Uncharted-Waters2) 在其基础上继续魔改、扩展和维护。本地硬件输入分支在前述工作基础上增加键盘与手柄控制。也感谢 [JohanLi 的逆向研究](https://github.com/JohanLi/uncharted-waters-2-research) 和 [genishs 的存档编辑器](https://github.com/genishs/dh2-py-editor)；两者的 MIT 许可文本保存在 `mobile/licenses/`，并随 APK 保留。[Dk2Edit 讨论](https://www.xycq.org.cn/forum/viewthread.php?page=1&tid=71167) 用于功能调研，其 Windows EXE 未嵌入本应用。
 
 原游戏、名称、商标及游戏素材归各自权利人所有，本项目不是 KOEI 官方 Android 版本。不同来源的代码与素材适用各自许可，**不以本仓库统一授权整个 APK**。上游原始许可、第三方说明和对应 GPL 组件源码说明见 [NOTICE](NOTICE.md)；Release 同时提供上游 v7.8 的 GPL 组件源码归档。
 
 ## 封版交接
 
-[0.8.2 技术交接与已知问题](docs/HANDOFF-0.8.2.md) · [0.8.2 发布说明](docs/releases/v0.8.2.md)
+[当前键盘/手柄测试构建交接](docs/handoff.md) · [0.8.2 技术交接与已知问题](docs/HANDOFF-0.8.2.md) · [0.8.2 发布说明](docs/releases/v0.8.2.md)
