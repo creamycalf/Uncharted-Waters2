@@ -1,13 +1,21 @@
 大航海时代2
-触屏适配测试版 0.8.2
+公开触屏版 0.8.2；本地键盘/手柄输入测试构建 0.9.2-input-test
 
 这是基于用户提供的 v7.8 APK 的本地适配工程。原 APK 未修改。
-Android 包名 org.local.uw2mobile，与原应用并存；不会自动读取原应用私有存档。
+公开版包名 org.local.uw2mobile，与原应用并存；不会自动读取原应用私有存档。本地输入测试构建使用 org.local.uw2mobile.inputtest，也可并存，且有独立存档。
 支持 Android 8.0+，横屏。首次运行十条存档为空，不附带测试存档。
 0.6.1 将应用名称统一为“大航海时代2”，功能沿用 0.6。
 0.6 新增船只、水手和海员修改，保留 0.5 的帆船图标和 0.4 的触屏、速度、音乐功能。
 图标提供多密度、Android 8 自适应圆形/圆角及 Android 13 主题单色资源。
 图标主图与完整生成提示词位于 artwork/，使用内置 image_gen 生成。修改主图后可运行 tools/prepare-icons.ps1 重建各尺寸。
+
+0.9.2-input-test 本地硬件输入
+- 键盘方向键/WASD 控制移动，Enter/空格确认，Escape/Backspace 返回；M 展开工具，F1 打开菜单。
+- 手柄十字键/左摇杆控制移动；A 确认、B 返回、X/Y 左键/右键、Start 展开工具、Select 打开菜单；右摇杆移动光标。
+- 肩键快捷操作：LB/L1=情报、LT/L2=经营、RB/R1=命令、RT/R2=航海术；扳机既支持数字按键事件，也支持模拟轴输入。
+- 启动菜单自动聚焦可用选项；方向键/十字键移动焦点，Enter/A 确认。读取或保存界面可在记录之间移动，Esc/B 返回；焦点以橙色框提示。
+- 当工具、存档选择框或其他弹层打开时，方向输入改为移动界面焦点；文本框获得焦点时键盘交还 WebView。
+- 用户报告在 iPlay 50 Mini 上方向键、A/B、摇杆、LB/LT/RB/RT 肩键映射，以及本版新增的启动菜单和存档导航均可用。
 
 0.8.2 更新
 - 攻略入口与菜单、修改器平级：展开“工具”后直接点击“攻略”。
@@ -79,11 +87,12 @@ Android 包名 org.local.uw2mobile，与原应用并存；不会自动读取原�
 - 不是全剧情/所有场景已验收的正式发行版，尚未把 Dk2Edit 的所有功能移植。
 
 构建
-需要 Node 20+、JDK 21、Android platform 36 和 build-tools 36.0.0。
+需要 Node 20+、JDK 21+、Android platform 36+ 和 build-tools 36.0.0。Windows 使用 PowerShell；macOS 可运行 bash mobile/tools/build-macos.sh。
 在工作区根目录放置原版 Uncharted-Waters-2-Android-v7.8.apk。
 powershell -NoProfile -ExecutionPolicy Bypass -File mobile/tools/build.ps1 -SdkRoot <SDK目录> -JdkRoot <JDK目录>
+macOS：bash mobile/tools/build-macos.sh
 node --test mobile/tests/core.test.cjs mobile/tests/frame-scheduling.test.cjs mobile/tests/mobile04.test.cjs mobile/tests/fleet.test.cjs
-输出 dist/Uncharted-Waters-2-Mobile-0.8.2.apk。与 0.2/0.3/0.4/0.5/0.6 同包名、同签名，可直接覆盖安装保留进度；不要先卸载。签名为本地测试证书，不是上游发行证书。
+Windows 稳定适配版输出 dist/Uncharted-Waters-2-Mobile-0.8.2.apk。macOS 硬件输入测试版输出 dist/Uncharted-Waters-2-Mobile-0.9.2-input-test.apk，包名为 org.local.uw2mobile.inputtest，不会覆盖公开版或共用其存档。签名为本地测试证书，不是上游发行证书。
 
 参考与归属
 https://github.com/maxleolee-eng/Uncharted-Waters-2-Android
