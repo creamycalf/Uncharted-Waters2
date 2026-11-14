@@ -12,3 +12,6 @@ if($LASTEXITCODE -ne 0){throw 'Game extraction failed'}
 Copy-Item "$inspection\game-check\MAIN.EXE" "$project\assets\web\game\MAIN.original.EXE" -Force
 Copy-Item "$project\licenses\JohanLi-MIT.txt" "$project\assets\release-docs\JohanLi-MIT.txt" -Force
 Copy-Item "$project\licenses\genishs-MIT.txt" "$project\assets\release-docs\genishs-MIT.txt" -Force
+$gplLicense=Join-Path $project 'assets\release-docs\licenses\GPL-2.0.txt'
+New-Item -ItemType Directory -Force (Split-Path $gplLicense) | Out-Null
+Copy-Item "$project\docs\upstream\licenses\GPL-2.0.txt" $gplLicense -Force
