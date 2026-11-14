@@ -40,6 +40,30 @@ cp "$INSPECTION/game-check/MAIN.EXE" "$ASSET_ROOT/web/game/MAIN.original.EXE"
 mkdir -p "$ASSET_ROOT/release-docs"
 cp "$MOBILE_DIR/licenses/JohanLi-MIT.txt" "$ASSET_ROOT/release-docs/JohanLi-MIT.txt"
 cp "$MOBILE_DIR/licenses/genishs-MIT.txt" "$ASSET_ROOT/release-docs/genishs-MIT.txt"
+mkdir -p "$ASSET_ROOT/release-docs/licenses"
+cp "$ROOT_DIR/docs/upstream/licenses/GPL-2.0.txt" "$ASSET_ROOT/release-docs/licenses/GPL-2.0.txt"
+# Optional, user-supplied upstream v8.9 APK contains the chart projection.
+# Never copy the APK or the artwork into version control.
+python3 - "$ASSET_ROOT/web/world-projection.json" "${UW2_V89_APK:-}" "${UW2_WORLD_PROJECTION:-}" <<'PYCODE'
+import hashlib, sys, zipfile
+from pathlib import Path
+out=Path(sys.argv[1]); source=sys.argv[2]; projection=sys.argv[3]
+if source:
+    apk=Path(source)
+    if hashlib.sha256(apk.read_bytes()).hexdigest() != "a26bb6a1265bd715842f7c9f70315ed35141f06869954002bf7ccf0052e34f94":
+        raise SystemExit("Unexpected v8.9 APK hash; chart projection was not imported.")
+    with zipfile.ZipFile(apk) as z: data=z.read("assets/web/world-projection.json")
+elif projection:
+    data=Path(projection).read_bytes()
+else:
+    out.unlink(missing_ok=True)
+    print("No chart projection supplied; chart falls back to coordinate grid.")
+    sys.exit(0)
+if hashlib.sha256(data).hexdigest() != "e166c3d5f02bbe970ce4c1d038e6b3271fb721af12e6fbd66aba536540182a75":
+    raise SystemExit("Unexpected chart projection hash.")
+out.write_bytes(data)
+print("Verified v8.9 chart projection imported.")
+PYCODE
 node "$SCRIPT_DIR/prepare.cjs"
 
 SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-$HOME/Library/Android/sdk}}"
@@ -114,7 +138,7 @@ if [[ ! -f "$KEYSTORE" ]]; then
     -storepass android -keypass android -alias local-test -keyalg RSA \
     -keysize 2048 -validity 3650 -dname "CN=UW2 Local Input Test"
 fi
-OUTPUT_APK="$OUTPUT_DIR/Uncharted-Waters-2-Mobile-0.9.3-input-test.apk"
+OUTPUT_APK="$OUTPUT_DIR/Uncharted-Waters-2-Mobile-0.9.16-input-test.apk"
 "$JDK_ROOT/bin/java" -jar "$BUILD_TOOLS/lib/apksigner.jar" sign \
   --ks "$KEYSTORE" --ks-pass pass:android --key-pass pass:android \
   --out "$OUTPUT_APK" "$BUILD_DIR/aligned.apk"
