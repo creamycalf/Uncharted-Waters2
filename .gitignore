@@ -31,6 +31,9 @@ local.properties
 # Keep only current reproducible tests and fleet acceptance scripts in Git
 /mobile/tests/*
 !/mobile/tests/core.test.cjs
+!/mobile/tests/market-navigation.test.cjs
+!/mobile/tests/save-names.test.cjs
+!/mobile/tests/transfer-ui.test.cjs
 !/mobile/tests/frame-scheduling.test.cjs
 !/mobile/tests/mobile04.test.cjs
 !/mobile/tests/fleet.test.cjs
